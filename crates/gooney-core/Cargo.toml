@@ -1,0 +1,12 @@
+[package]
+name = "gooney-core"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "gooneymart_emu"
+# "lib" allows Rust usage, "staticlib" compiles libgooneymart_emu.a for Verilator C-FFI
+crate-type = ["lib", "staticlib"]
+
+[dependencies]
+# Add core dependencies here later (e.g., bitflags, etc.)

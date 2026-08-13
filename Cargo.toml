@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "crates/gooney-core",
+    "crates/gooney-tui"
+]
+resolver = "2"

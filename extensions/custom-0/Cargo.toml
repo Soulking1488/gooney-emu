@@ -1,0 +1,10 @@
+[package]
+name = "gooney-ext-custom-0"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["lib"]
+
+[dependencies]
+# Can link back to core types if needed via path or workspace
