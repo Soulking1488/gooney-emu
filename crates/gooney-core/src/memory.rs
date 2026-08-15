@@ -30,6 +30,39 @@ impl Memory {
         Ok(())
     }
 
+    // --- 8-bit ---
+    pub fn read_u8(&self, addr: u64) -> Result<u8, &'static str> {
+        let idx = self.translate(addr)?;
+        Ok(self.data[idx])
+    }
+
+    pub fn write_u8(&mut self, addr: u64, val: u8) -> Result<(), &'static str> {
+        let idx = self.translate(addr)?;
+        self.data[idx] = val;
+        Ok(())
+    }
+
+    // --- 16-bit ---
+    pub fn read_u16(&self, addr: u64) -> Result<u16, &'static str> {
+        let idx = self.translate(addr)?;
+        if idx + 2 > self.data.len() {
+            return Err("Out-of-bounds 16-bit read");
+        }
+        let bytes = &self.data[idx..idx + 2];
+        Ok(u16::from_le_bytes(bytes.try_into().unwrap()))
+    }
+
+    pub fn write_u16(&mut self, addr: u64, val: u16) -> Result<(), &'static str> {
+        let idx = self.translate(addr)?;
+        if idx + 2 > self.data.len() {
+            return Err("Out-of-bounds 16-bit write");
+        }
+        let bytes = val.to_le_bytes();
+        self.data[idx..idx + 2].copy_from_slice(&bytes);
+        Ok(())
+    }
+
+    // --- 32-bit ---
     pub fn read_u32(&self, addr: u64) -> Result<u32, &'static str> {
         let idx = self.translate(addr)?;
         if idx + 4 > self.data.len() {
@@ -46,6 +79,26 @@ impl Memory {
         }
         let bytes = val.to_le_bytes();
         self.data[idx..idx + 4].copy_from_slice(&bytes);
+        Ok(())
+    }
+
+    // --- 64-bit ---
+    pub fn read_u64(&self, addr: u64) -> Result<u64, &'static str> {
+        let idx = self.translate(addr)?;
+        if idx + 8 > self.data.len() {
+            return Err("Unaligned or out-of-bounds 64-bit read");
+        }
+        let bytes = &self.data[idx..idx + 8];
+        Ok(u64::from_le_bytes(bytes.try_into().unwrap()))
+    }
+
+    pub fn write_u64(&mut self, addr: u64, val: u64) -> Result<(), &'static str> {
+        let idx = self.translate(addr)?;
+        if idx + 8 > self.data.len() {
+            return Err("Unaligned or out-of-bounds 64-bit write");
+        }
+        let bytes = val.to_le_bytes();
+        self.data[idx..idx + 8].copy_from_slice(&bytes);
         Ok(())
     }
 }

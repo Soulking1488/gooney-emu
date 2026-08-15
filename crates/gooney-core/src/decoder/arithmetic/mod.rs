@@ -17,7 +17,9 @@ pub fn execute(
 ) -> ExecutionResult {
     match opcode {
         0x13 => imm::execute(instruction, rd, rs1, funct3, funct7, cpu),
+        0x1B => imm::execute_32(instruction, rd, rs1, funct3, funct7, cpu),
         0x33 => reg::execute(instruction, rd, rs1, rs2, funct3, funct7, cpu),
+        0x3B => reg::execute_32(instruction, rd, rs1, rs2, funct3, funct7, cpu),
         0x37 | 0x17 => upper::execute(opcode, instruction, rd, cpu),
         _ => ExecutionResult::Trap(format!("Unknown arithmetic opcode: 0x{:X}", opcode)),
     }

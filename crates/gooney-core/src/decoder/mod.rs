@@ -1,21 +1,31 @@
-use crate::cpu::CpuState;
-use crate::memory::Memory;
-
 pub mod arithmetic;
 pub mod control;
 pub mod memory_instr;
+pub mod system;
 
-#[derive(Debug, PartialEq)]
+use crate::cpu::CpuState;
+use crate::memory::Memory;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ExecutionResult {
     Ok,
-    Trap(String),
     Halt,
+    Trap(String),
 }
 
 pub struct Decoder;
 
 impl Decoder {
-    pub fn decode_and_execute(instruction: u32, cpu: &mut CpuState, mem: &mut Memory) -> ExecutionResult {
+    pub fn decode_and_execute(
+        instruction: u32,
+        cpu: &mut CpuState,
+        memory: &mut Memory,
+    ) -> ExecutionResult {
+        // Check for explicit ecall/halt instruction (0x00000073)
+        if instruction == 0x00000073 {
+            return ExecutionResult::Halt;
+        }
+
         let opcode = instruction & 0x7F;
         let rd = ((instruction >> 7) & 0x1F) as usize;
         let rs1 = ((instruction >> 15) & 0x1F) as usize;
@@ -25,39 +35,19 @@ impl Decoder {
 
         match opcode {
             // Arithmetic & Upper Immediates
-            0x13 | 0x33 | 0x37 | 0x17 => {
+            0x13 | 0x33 | 0x1B | 0x3B | 0x37 | 0x17 => {
                 arithmetic::execute(opcode, instruction, rd, rs1, rs2, funct3, funct7, cpu)
             }
-
-            // Jumps & Branches
-            0x6F | 0x67 | 0x63 => {
+            // Control Flow & Branching
+            0x63 | 0x6F | 0x67 => {
                 control::execute(opcode, instruction, rd, rs1, rs2, funct3, cpu)
             }
-
-            // Loads & Stores
             0x03 | 0x23 => {
-                memory_instr::execute(opcode, instruction, rd, rs1, rs2, funct3, cpu, mem)
+                memory_instr::execute(opcode, instruction, rd, rs1, rs2, funct3, cpu, memory)
             }
-
-            // System Instructions (ECALL)
-            0x73 => {
-                cpu.pc += 4;
-                ExecutionResult::Halt
-            }
-
-            // Custom Opcode Slots
-            0x0B | 0x2B | 0x5B | 0x7B => {
-                cpu.pc += 4;
-                ExecutionResult::Trap(format!("Trap: custom opcode unassigned (instruction: 0x{:08X})", instruction))
-            }
-
-            _ => {
-                cpu.pc += 4;
-                ExecutionResult::Trap(format!(
-                    "Illegal Instruction: Unknown opcode 0x{:02X} in instruction 0x{:08X}",
-                    opcode, instruction
-                ))
-            }
+            0x0F => system::execute(opcode, instruction, cpu),
+            0x73 => system::execute(opcode, instruction, cpu),
+            _ => ExecutionResult::Trap(format!("Unknown opcode: 0x{:X}", opcode)),
         }
     }
 }
