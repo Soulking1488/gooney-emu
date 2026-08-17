@@ -1,0 +1,7 @@
+[package]
+name = "custom-0"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gooneymart-emu = { path = "../../crates/gooney-core" }

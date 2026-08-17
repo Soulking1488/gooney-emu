@@ -9,4 +9,3 @@ name = "gooneymart_emu"
 crate-type = ["lib", "staticlib"]
 
 [dependencies]
-# Add core dependencies here later (e.g., bitflags, etc.)

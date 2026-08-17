@@ -1,0 +1,11 @@
+[package]
+name = "gooney_example"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "gooney_example"
+path = "src/lib.rs"
+
+[dependencies]
+gooney-core = { path = "../../../crates/gooney-core" }

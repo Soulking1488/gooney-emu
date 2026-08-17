@@ -2,6 +2,7 @@ pub mod arithmetic;
 pub mod control;
 pub mod memory_instr;
 pub mod system;
+pub mod custom;
 
 use crate::cpu::CpuState;
 use crate::memory::Memory;
@@ -47,6 +48,12 @@ impl Decoder {
             }
             0x0F => system::execute(opcode, instruction, cpu),
             0x73 => system::execute(opcode, instruction, cpu),
+            
+            // --- Custom Extension Funnel (CUSTOM-0 to CUSTOM-3) ---
+            0x0B | 0x2B | 0x5B | 0x7B => {
+                custom::execute_custom(opcode, instruction, cpu)
+            }
+
             _ => ExecutionResult::Trap(format!("Unknown opcode: 0x{:X}", opcode)),
         }
     }

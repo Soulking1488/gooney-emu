@@ -1,7 +1,9 @@
 # Root Rust target and build artifacts
 target/
 **/.DS_Store
-
-# Allow extension folders to exist as local development sandboxes,
-# but ignore their local cargo target builds
-extensions/*/target/
+ 
+# Ignore any user project directories or build artifacts nested inside the custom extension slots,
+# while leaving the base template files (Cargo.toml, src/lib.rs) tracked.
+extensions/custom-*/*/*
+extensions/custom-*/target/
+extensions/custom-*/Cargo.lock

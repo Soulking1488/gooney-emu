@@ -1,6 +1,11 @@
+use crate::decoder::ExecutionResult;
+
+pub type CustomHandler = fn(u32, &mut CpuState) -> ExecutionResult;
+
 pub struct CpuState {
     pub regs: [u64; 32],
     pub pc: u64,
+    pub custom_handlers: [Option<CustomHandler>; 4],
 }
 
 impl CpuState {
@@ -8,6 +13,7 @@ impl CpuState {
         Self {
             regs: [0; 32],
             pc: 0x80000000, // Standard RISC-V start address for bare-metal binaries
+            custom_handlers: [None; 4],
         }
     }
 
