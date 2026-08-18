@@ -5,4 +5,5 @@ pub mod diff;
 pub mod disasm;
 pub mod shell;
 pub mod test_cmd;
-
+pub mod connect;
+pub mod reset;

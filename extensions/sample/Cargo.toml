@@ -3,5 +3,9 @@ name = "custom-0"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "custom_0"
+path = "src/lib.rs"
+
 [dependencies]
-gooneymart-emu = { path = "../../crates/gooney-core" }
+gooney-core = { path = "../../crates/gooney-core" }

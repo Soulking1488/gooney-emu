@@ -9,3 +9,5 @@ name = "gooneymart_emu"
 crate-type = ["lib", "staticlib"]
 
 [dependencies]
+libloading = "0.9"
+

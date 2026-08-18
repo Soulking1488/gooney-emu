@@ -10,7 +10,7 @@ pub struct Cli {
     pub command: Commands,
 }
 
-#[derive(Subcommand)]
+#[derive(Subcommand, Debug)]
 pub enum Commands {
     /// Interactive REPL shell for running RISC-V instructions
     Shell,
@@ -23,9 +23,18 @@ pub enum Commands {
 
     /// Pre-flight check and compile a custom extension folder (e.g., custom-0)
     Lint {
-        #[arg(help = "Target extension name (e.g., custom-0, custom-1)")]
+        #[arg(help = "Target extension name (e.g., custom-0, custom-1)", default_value = "all")]
         extension: String,
     },
+
+    /// Run linter pre-flight check and securely connect a custom extension slot
+    Connect {
+        #[arg(help = "Target extension slot", default_value = "custom-0")]
+        slot: String,
+    },
+
+    /// Disconnect all custom extensions and reset emulator core to vanilla state
+    Reset,
 
     /// Automated trace diffing against Verilator RTL simulation logs
     Diff {

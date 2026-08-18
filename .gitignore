@@ -7,3 +7,8 @@ target/
 extensions/custom-*/*/*
 extensions/custom-*/target/
 extensions/custom-*/Cargo.lock
+
+# Gooney-Emu Compiled Plugins & Extension Build Artifacts
+crates/gooney-core/plugins/*.so
+extensions/**/target/
+extensions/**/.connected

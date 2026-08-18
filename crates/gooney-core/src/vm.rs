@@ -1,17 +1,49 @@
-use crate::cpu::CpuState;
+use crate::cpu::{CpuState, CustomHandler};
 use crate::memory::Memory;
 use crate::decoder::{Decoder, ExecutionResult};
+use std::path::Path;
 
 pub struct VirtualMachine {
     pub cpu: CpuState,
     pub memory: Memory,
+    _library_handles: Vec<libloading::Library>,
 }
 
 impl VirtualMachine {
     pub fn new(mem_size: usize) -> Self {
+        let mut cpu = CpuState::new();
+        let mut library_handles = Vec::new();
+
+        // Automatically scan plugin slots (0 to 3) for connected extensions and compiled artifacts
+        for slot in 0..4 {
+            let marker_path = format!("extensions/custom-{}/.connected", slot);
+            if Path::new(&marker_path).exists() {
+                let lib_path = format!("crates/gooney-core/plugins/slot_{}.so", slot);
+                if Path::new(&lib_path).exists() {
+                    unsafe {
+                        match libloading::Library::new(&lib_path) {
+                            Ok(lib) => {
+                                match lib.get::<libloading::Symbol<CustomHandler>>(b"execute") {
+                                    Ok(func) => {
+                                        let raw_fn: CustomHandler = **func;
+                                        cpu.custom_handlers[slot] = Some(raw_fn);
+                                        library_handles.push(lib);
+                                        println!("🔌 [Core] Dynamically loaded plugin for slot custom-{} from {}", slot, lib_path);
+                                    }
+                                    Err(e) => println!("⚠️ Failed to find 'execute' symbol in {}: {}", lib_path, e),
+                                }
+                            }
+                            Err(e) => println!("⚠️ Failed to load library {}: {}", lib_path, e),
+                        }
+                    }
+                }
+            }
+        }
+
         Self {
-            cpu: CpuState::new(),
+            cpu,
             memory: Memory::new(mem_size, 0x80000000),
+            _library_handles: library_handles,
         }
     }
 
@@ -40,7 +72,7 @@ impl VirtualMachine {
             match self.step()? {
                 ExecutionResult::Ok => {}
                 ExecutionResult::Trap(reason) => {
-                    println!("⚠️ Execution Trapped at PC 0x{:016X}: {}", self.cpu.pc - 4, reason);
+                    println!("⚠ Execution Trapped at PC 0x{:016X}: {}", self.cpu.pc - 4, reason);
                     return Ok(());
                 }
                 ExecutionResult::Halt => {
@@ -49,7 +81,7 @@ impl VirtualMachine {
                 }
             }
         }
-        println!("⏱️ Reached max cycles limit ({})", max_cycles);
+        println!("⏱ Reached max cycles limit ({})", max_cycles);
         Ok(())
     }
 }

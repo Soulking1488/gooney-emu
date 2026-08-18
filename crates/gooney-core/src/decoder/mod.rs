@@ -8,6 +8,7 @@ use crate::cpu::CpuState;
 use crate::memory::Memory;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[repr(C)]
 pub enum ExecutionResult {
     Ok,
     Halt,

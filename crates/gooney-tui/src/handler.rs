@@ -8,7 +8,11 @@ pub fn handle_command(command: &Commands) {
         Commands::Lint { extension } => commands::lint::execute(extension),
         Commands::Diff { emu_trace, rtl_trace } => commands::diff::execute(emu_trace, rtl_trace),
         Commands::Test => commands::test_cmd::execute(),
+        Commands::Reset => commands::reset::execute(),
         Commands::Disasm { path } => commands::disasm::execute(path),
         Commands::Fuzz { count } => commands::fuzz::execute(*count),
+        Commands::Connect { slot } => {
+            commands::connect::execute(slot);
+        }
     }
 }

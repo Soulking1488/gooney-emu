@@ -1,6 +1,8 @@
 [workspace]
 members = [
+    "extensions/custom-0/gooney-example",
     "crates/gooney-core",
     "crates/gooney-tui"
 ]
 resolver = "2"
+

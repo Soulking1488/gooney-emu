@@ -7,5 +7,5 @@ edition = "2021"
 name = "gooney_example"
 crate-type = ["lib", "cdylib"]
 
-[dependencies]
+[idependencies]
 gooney-core = { path = "../../../crates/gooney-core" }

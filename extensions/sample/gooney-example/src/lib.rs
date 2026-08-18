@@ -1,9 +1,10 @@
-use gooney_core::cpu::CpuState;
-use gooney_core::decoder::ExecutionResult;
-
+use gooneymart_emu::cpu::CpuState;
+use gooneymart_emu::decoder::ExecutionResult;
 /// A sample custom extension instruction: GOONEY_ADD
 /// Operation: rd = rs1 + rs2 + 0x42 (Magic Constant)
-pub fn execute(instruction: u32, cpu: &mut CpuState) -> ExecutionResult {
+#[allow(improper_ctypes_definitions)]
+#[no_mangle]
+pub extern "C" fn execute(instruction: u32, cpu: &mut CpuState) -> ExecutionResult {
     let rd = ((instruction >> 7) & 0x1F) as usize;
     let rs1 = ((instruction >> 15) & 0x1F) as usize;
     let rs2 = ((instruction >> 20) & 0x1F) as usize;
