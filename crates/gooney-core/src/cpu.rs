@@ -49,3 +49,45 @@ impl CpuState {
         println!("=================");
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_x0_hardwiring_native() {
+        let mut cpu = CpuState::new();
+        cpu.write_reg(0, 0xDEADBEEFCAFEBABE);
+        assert_eq!(cpu.read_reg(0), 0, "read_reg(0) must return 0");
+        assert_eq!(cpu.regs[0], 0, "write_reg must drop writes to x0");
+    }
+
+    #[test]
+    fn test_sign_extension_helpers() {
+        let raw_byte: u8 = 0x80;
+        let sign_extended_64: u64 = (raw_byte as i8) as i64 as u64;
+        
+        assert_eq!(
+            sign_extended_64, 
+            0xFFFFFFFFFFFFFF80,
+            "Sign-extension for LB failed!"
+        );
+    }
+
+    #[test]
+    fn test_divergence_reporter_formatting() {
+        let cycle = 142;
+        let reg_idx = 5;
+        let expected_val: u64 = 42;
+        let actual_val: u64 = 44;
+
+        let divergence_msg = format!(
+            "❌ DIVERGENCE DETECTED [Cycle {}]: Reg x{} mismatch. Expected (Oracle): {:#x}, Actual (RTL): {:#x}",
+            cycle, reg_idx, expected_val, actual_val
+        );
+
+        assert!(divergence_msg.contains("Cycle 142"));
+        assert!(divergence_msg.contains("Reg x5"));
+        assert!(divergence_msg.contains("0x2a"));
+    }
+}

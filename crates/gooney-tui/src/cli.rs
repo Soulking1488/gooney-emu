@@ -53,6 +53,22 @@ pub enum Commands {
         path: String,
     },
 
+    Analyze {
+        /// Optional path to the HDL directory (defaults to 'hdl/')
+        #[arg(short, long, default_value = "hdl")]
+        path: String,
+    },
+
+    Cosim {
+        /// Path to the firmware or test binary to execute
+        #[arg(short, long, default_value = "tests/firmware.bin")]
+        binary: String,
+
+        /// Number of simulation cycles/steps to execute
+        #[arg(short, long, default_value_t = 100)]
+        steps: usize,
+    },
+
     /// Stress-test hazard detection and pipeline forwarding logic via fuzzing
     Fuzz {
         #[arg(short, long, default_value_t = 1000, help = "Number of random instruction cycles")]

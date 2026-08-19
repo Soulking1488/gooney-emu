@@ -10,6 +10,18 @@ pub fn handle_command(command: &Commands) {
         Commands::Test => commands::test_cmd::execute(),
         Commands::Reset => commands::reset::execute(),
         Commands::Disasm { path } => commands::disasm::execute(path),
+        Commands::Analyze { path } => {
+            if let Err(e) = crate::commands::analyze::execute(&path) {
+                eprintln!("{}", e);
+                std::process::exit(1);
+            }
+        }
+        Commands::Cosim { binary, steps } => {
+            if let Err(e) = crate::commands::cosim::execute(binary, *steps) {
+                eprintln!("{}", e);
+                std::process::exit(1);
+            }
+        }
         Commands::Fuzz { count } => commands::fuzz::execute(*count),
         Commands::Connect { slot } => {
             commands::connect::execute(slot);

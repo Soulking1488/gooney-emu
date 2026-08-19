@@ -7,3 +7,5 @@ pub mod shell;
 pub mod test_cmd;
 pub mod connect;
 pub mod reset;
+pub mod analyze;
+pub mod cosim;

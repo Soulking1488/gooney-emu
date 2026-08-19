@@ -12,3 +12,10 @@ extensions/custom-*/Cargo.lock
 crates/gooney-core/plugins/*.so
 extensions/**/target/
 extensions/**/.connected
+
+# Ignore everything in the HDL workspace...
+hdl/*
+# ...except for the documentation/checklist file
+!hdl/ANALYZE.md
+!hdl/COSIM.md
+
