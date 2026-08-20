@@ -2,8 +2,7 @@
 target/
 **/.DS_Store
  
-# Ignore any user project directories or build artifacts nested inside the custom extension slots,
-# while leaving the base template files (Cargo.toml, src/lib.rs) tracked.
+# Ignore any user project directories or build artifacts nested inside the custom extension slots
 extensions/custom-*/*/*
 extensions/custom-*/target/
 extensions/custom-*/Cargo.lock
@@ -13,9 +12,22 @@ crates/gooney-core/plugins/*.so
 extensions/**/target/
 extensions/**/.connected
 
-# Ignore everything in the HDL workspace...
+# HDL Workspace: Ignore heavy build artifacts, keep documentation
 hdl/*
-# ...except for the documentation/checklist file
 !hdl/ANALYZE.md
 !hdl/COSIM.md
 
+# Firmware Tests: Ignore source test binaries, but track the directory structure
+tests/*
+!tests/firmware.bin
+!tests/README.md
+
+# Logs & Temporary Files
+*.log
+*.tmp
+*.dump
+cargo_errors.log
+
+# Nix environment artifacts
+.direnv/
+.nix-profile/
