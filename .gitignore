@@ -19,7 +19,6 @@ hdl/*
 
 # Firmware Tests: Ignore source test binaries, but track the directory structure
 tests/*
-!tests/firmware.bin
 !tests/README.md
 
 # Logs & Temporary Files
